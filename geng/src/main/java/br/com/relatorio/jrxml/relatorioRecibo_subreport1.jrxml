@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorioRecibo_subreport1" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="26bf7e5c-2f3f-4582-8da1-43f7f0f3f4e7">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="trabalhador" class="java.lang.Integer"/>
+	<parameter name="datainicio" class="java.util.Date"/>
+	<parameter name="datafim" class="java.util.Date"/>
+	<parameter name="path" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[SELECT d.trabalhador, t.nome, t.cbo, d.data, d.servico, s.descricao, d.producaoacordada, d.producaoexecutada, d.salario, d.horaextra, d.vhextra, d.vinsalubridade
+FROM diario d, trabalhador t, servico s
+WHERE d.trabalhador = t.matricula AND
+      d.servico = s.codigo AND
+      d.data BETWEEN $P{datainicio} AND 	$P{datafim} AND
+      d.trabalhador = $P{trabalhador}
+ORDER BY d.trabalhador, d.data]]>
+	</queryString>
+	<field name="trabalhador" class="java.lang.Integer"/>
+	<field name="nome" class="java.lang.String"/>
+	<field name="cbo" class="java.lang.String"/>
+	<field name="data" class="java.sql.Date"/>
+	<field name="servico" class="java.lang.Integer"/>
+	<field name="descricao" class="java.lang.String"/>
+	<field name="producaoacordada" class="java.lang.Long"/>
+	<field name="producaoexecutada" class="java.lang.Long"/>
+	<field name="salario" class="java.lang.Double"/>
+	<field name="horaextra" class="java.sql.Time"/>
+	<field name="vhextra" class="java.lang.Double"/>
+	<field name="vinsalubridade" class="java.lang.Double"/>
+	<group name="trabalhador" isStartNewPage="true">
+		<groupExpression><![CDATA[$F{trabalhador}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="13">
+				<subreport>
+					<reportElement uuid="d784db41-09e4-4ac6-a67a-841b3487005e" x="0" y="0" width="555" height="13"/>
+					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+					<subreportParameter name="trabalhador">
+						<subreportParameterExpression><![CDATA[$F{trabalhador}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="datainicio">
+						<subreportParameterExpression><![CDATA[$P{datainicio}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="path">
+						<subreportParameterExpression><![CDATA[$P{path}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="datafim">
+						<subreportParameterExpression><![CDATA[$P{datafim}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression><![CDATA[$P{path}+"relatorioRecibo_subreport2.jasper"]]></subreportExpression>
+				</subreport>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="11" splitType="Stretch">
+			<textField pattern="dd/MM/yyyy EEE">
+				<reportElement uuid="a5a68145-46b2-47ac-99f3-df3078e66ea0" x="0" y="-1" width="94" height="12"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="7c242e77-3b25-4845-b406-685723d4ab2e" x="94" y="-1" width="152" height="12"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{servico} + " - " + $F{descricao}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement uuid="e40d348f-c63c-4975-b297-c72e99ceed27" x="246" y="-1" width="34" height="12"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{producaoacordada}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0">
+				<reportElement uuid="5ba9026f-df32-4159-a5f3-4ce9b9e7d67a" x="280" y="-1" width="38" height="12"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{producaoexecutada}]]></textFieldExpression>
+			</textField>
+			<textField pattern="HH:mm">
+				<reportElement uuid="5409e2cd-bda6-477f-9197-399ccc43ce4f" x="368" y="-1" width="47" height="12"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{horaextra}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="1c2d6e97-e6e6-4e6e-87bb-407ab500b550" x="415" y="-1" width="52" height="12"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{vhextra}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00">
+				<reportElement uuid="605f06d2-9119-4715-8eb5-62322d832573" x="318" y="-1" width="50" height="12"/>
+				<textElement>
+					<font size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{salario}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

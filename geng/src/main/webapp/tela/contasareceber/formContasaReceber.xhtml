@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<f:loadBundle basename="message_pt_BR" var="inter" />
+<rich:jQuery timing="domready" selector="#cliente" query="focus()" />
+<h:form>
+<h:panelGrid columns="4">
+	<h:outputText value="#{inter.cliente}" style="float: right;"/>
+	<h:selectOneMenu value="#{contasareceberBean.contasareceber.cliente}" id="cliente" style="width:250px; align:left;" converter="entityConverter">
+		<f:selectItems value="#{clienteBean.listaCliente}" />
+	</h:selectOneMenu>
+	<h:outputText value="#{inter.mesreferencia}" style="float: right;"/>
+	<a4j:outputPanel id="mesreferencia" layout="block">
+		<rich:calendar value="#{contasareceberBean.contasareceber.mesreferencia}"
+			datePattern="MM/yyyy" cellWidth="24px" cellHeight="22px" 
+			style="width:200px" inputSize="7" showWeekDaysBar="false" showFooter="false" styleClass="special"
+			oncurrentdateselected="event.rich.component.selectDate(event.rich.date)"/>
+	</a4j:outputPanel>
+	<h:outputText value="#{inter.tipodoc}" style="float: right;"/>
+	<h:selectOneMenu value="#{contasareceberBean.contasareceber.tipodoc}" id="tipodoc" style="width:250px; align:left;">
+		<f:selectItems value="#{geralBean.getListaGeralGrupo('cptipodoc')}" />
+	</h:selectOneMenu>
+	<h:outputText value="#{inter.venda}" style="float: right;"/>
+	<rich:autocomplete value="#{contasareceberBean.contasareceber.venda}" mode="ajax" id="autoCompleteVenda" tokens=",[]" autocompleteMethod="#{vendaBean.autocompleteVenda}" converter="entityConverter"/>
+	<h:outputText value="*#{inter.valor}" style="float: right;" />
+	<h:inputText value="#{contasareceberBean.contasareceber.valor}"
+		maxlength="8" style=" width : 75px;" id="valor" 
+		converter="doubleConverter" disabled="#{contasareceberBean.disabled}"
+		converterMessage="Campo Valor: Formato inválido" />
+	<h:outputText value="*#{inter.parcela}" style="float: right;" />
+	<h:inputText value="#{contasareceberBean.contasareceber.parcela}" 
+		maxlength="5" style=" width : 33px;" id="parcela" disabled="#{contasareceberBean.disabled}"
+		converterMessage="Campo Parcelas: Apenas números são aceitos">
+	</h:inputText>
+	<h:outputText value="*#{inter.dia}" style="float: right;" />
+	<h:inputText value="#{contasareceberBean.contasareceber.dia}" 
+		maxlength="5" style=" width : 33px;" id="dia" disabled="#{contasareceberBean.disabled}"
+		converterMessage="Campo Dias: Apenas números são aceitos">
+	</h:inputText>
+	<h:outputText value="*#{inter.datavencimento}" style="float: right;"/>
+	<a4j:outputPanel id="vencimento" layout="block">
+		<rich:calendar value="#{contasareceberBean.contasareceber.datavencimento}"
+			datePattern="dd/MM/yyyy" cellWidth="24px" cellHeight="22px" 
+			style="width:200px" inputSize="7" showWeeksBar="false"/>
+	</a4j:outputPanel>
+	<h:outputText value="" />
+	<h:outputText value="" />
+	<h:outputText value="" />
+	<a4j:commandButton value="#{inter.btgerar}" action="#{contasareceberBean.gerarParcelas}" render="tbparcela, parcela, dia, valor" style="width:70px; float:right;"/>
+</h:panelGrid>
+<h:panelGrid columns="2">
+<a4j:outputPanel id="tbparcela">
+	<rich:dataTable cellpadding="0" cellspacing="0" rowClasses="odd-row, even-row" styleClass="stable"
+					style="width:620px; algin:center;" border="0" var="parcela" value="#{contasareceberBean.tbParcela}">
+	    <f:facet name="header">
+	        <rich:columnGroup>
+	            <rich:column>
+	                <h:outputText value="#{inter.tbdtvencimento}" />
+	            </rich:column>
+	            <rich:column>
+	                <h:outputText value="#{inter.tbvalorparcela}" />
+	            </rich:column>
+<!-- 	            <rich:column> -->
+<!-- 	                <h:outputText value="#{inter.tbfpagamento}" /> -->
+<!-- 	            </rich:column> -->
+	            <rich:column>
+	                <h:outputText value="#{inter.tbdtpagamento}" />
+	            </rich:column>
+<!-- 	            <rich:column> -->
+<!-- 	                <h:outputText value="#{inter.tbvalorpago}" /> -->
+<!-- 	            </rich:column> -->
+	        </rich:columnGroup>
+	    </f:facet>
+	    <rich:column>
+	    	<h:outputText value="#{parcela.datavencimento}" >
+	    		<f:convertDateTime pattern="dd/MM/yyyy"/>
+    		</h:outputText>
+	    </rich:column>
+	    <rich:column>
+	    	<h:outputText value="#{parcela.valorparcela}" >
+	    		<f:convertNumber pattern="####0.00"/>
+    		</h:outputText>
+	    </rich:column>
+<!-- 	    <rich:column> -->
+<!-- 	    	<h:outputText value="#{parcela.formapagamento}" /> -->
+<!-- 	    </rich:column> -->
+	    <rich:column>
+	    	<h:outputText value="#{parcela.datapagamento}" >
+	    		<f:convertDateTime pattern="dd/MM/yyyy"/>
+	    	</h:outputText>
+	    </rich:column>
+<!-- 	    <rich:column> -->
+<!-- 	    	<h:outputText value="#{parcela.valorpago}" > -->
+<!-- 	    		<f:convertNumber pattern="####0.00"/> -->
+<!--     		</h:outputText> -->
+<!-- 	    </rich:column> -->
+	</rich:dataTable>
+</a4j:outputPanel>
+</h:panelGrid>
+</h:form>
+</html>

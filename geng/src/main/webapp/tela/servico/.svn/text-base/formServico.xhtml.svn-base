@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<f:loadBundle basename="message" var="inter" />
+<rich:jQuery timing="onload" selector="#{servicoBean.foco}" query="focus()" />
+<h:panelGrid columns="2">
+	<h:outputText value="*#{inter.codigo}" style="float: right;"/>
+	<h:inputText value="#{servicoBean.servico.codigo}" maxlength="8" style=" width : 50px;" disabled="#{servicoBean.disable}" id="codigo"
+													   converterMessage="Campo Código: Apenas números são aceitos">
+		<f:convertNumber pattern="########" integerOnly="true"/>
+	</h:inputText>
+	<h:outputText value="*#{inter.descricao}" style="float: right;"/>
+	<h:inputText value="#{servicoBean.servico.descricao}" maxlength="100" style=" width:270px; align:left;" id="descricao"/>
+	<h:outputText value="*#{inter.unidade}" style="float: right;"/>
+	<h:inputText value="#{servicoBean.servico.unidade}" maxlength="10" style=" width:50px; align:left;" id="unidade"/>
+</h:panelGrid>
+</html>

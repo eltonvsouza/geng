@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<h:outputStylesheet>
+        .pic {
+        margin-bottom: -4px;
+        margin-right: 2px;
+        }
+ 
+        .search .rf-ddm-itm-sel {
+        background-color: transparent;
+        background-image:none;
+        border-color: transparent;
+        cursor: default;
+        }
+    </h:outputStylesheet>
+	<f:loadBundle basename="message_pt_BR" var="inter" />
+	<h:form>
+		<rich:toolbar itemSeparator="line" height="26">
+			<rich:toolbarGroup>
+				<rich:dropDownMenu label="Administração" popupWidth="50">
+					<rich:menuGroup label="Cadastro">
+						<rich:menuGroup label="Trabalhador">
+							<rich:menuGroup label="Função">
+								<rich:menuItem label="Cadastrar" action="#{funcaoBean.carregarCadastrar}" />
+								<rich:menuItem label="Listar" action="/tela/trabalhador/funcao/listarFuncao" />
+							</rich:menuGroup>
+							<rich:menuGroup label="Ocorrência">
+								<rich:menuItem label="Cadastrar" action="#{ocorrenciaBean.carregarCadastrar}" />
+								<rich:menuItem label="Listar" action="/tela/trabalhador/ocorrencia/listarOcorrencia" />
+							</rich:menuGroup>
+						</rich:menuGroup>
+						<rich:menuGroup label="Serviço">
+							<rich:menuItem label="Cadastrar" action="#{servicoBean.carregarCadastrar}" />
+							<rich:menuItem label="Listar" action="/tela/servico/listarServico" />
+							<rich:menuGroup label="Insalubridade" id="insalubridade">
+								<rich:menuItem label="Cadastrar" action="#{insalubridadeBean.carregarCadastrar}" />
+								<rich:menuItem label="Listar" action="/tela/servico/insalubridade/listarInsalubridade" />
+							</rich:menuGroup>
+						</rich:menuGroup>
+					</rich:menuGroup>
+					<rich:menuGroup label="Sistema">
+						<rich:menuGroup label="Usuário">
+							<rich:menuItem label="Cadastrar" action="#{usuarioBean.carregarCadastrar}" />
+							<rich:menuItem label="Listar" action="/tela/usuario/listarUsuario" />
+							<rich:menuItem label="Alterar Senha" action="#{usuarioBean.carregarAlterarSenha}" />
+						</rich:menuGroup>
+						<rich:menuGroup label="Configuração">
+							<rich:menuItem label="Cadastrar" action="#{configuracaoBean.carregarCadastrar}" />
+							<rich:menuItem label="Listar" action="/tela/configuracao/listarConfiguracao" />
+						</rich:menuGroup>
+						<rich:menuItem label="Backup/Restore" action="/tela/backup/backupRestore" />
+					</rich:menuGroup>
+				</rich:dropDownMenu>
+			</rich:toolbarGroup>
+			<rich:toolbarGroup>
+				<rich:dropDownMenu label="Cadastro" popupWidth="50">
+					<rich:menuGroup label="Resposável">
+						<rich:menuItem label="Cadastrar" action="#{responsavelBean.carregarCadastrar}" />
+						<rich:menuItem label="Listar" action="/tela/responsavel/listarResponsavel" />
+					</rich:menuGroup>
+					<rich:menuGroup label="Empresa">
+						<rich:menuItem label="Cadastrar" action="#{empresaBean.carregarCadastrar}" />
+						<rich:menuItem label="Listar" action="/tela/empresa/listarEmpresa" />
+					</rich:menuGroup>
+					<rich:menuGroup label="Trabalhador">
+						<rich:menuItem label="Cadastrar" action="#{trabalhadorBean.carregarCadastrar}" />
+						<rich:menuItem label="Listar" action="/tela/trabalhador/listarTrabalhador" />
+						<rich:menuGroup label="Filho">
+							<rich:menuItem label="Cadastrar" action="#{filhoBean.carregarCadastrar}" />
+							<rich:menuItem label="Listar" action="/tela/trabalhador/filho/listarFilho" />
+						</rich:menuGroup>
+					</rich:menuGroup>
+					<rich:menuSeparator id="menuSeparator2" />
+					<rich:menuGroup label="Produto" disabled="true">
+						<rich:menuItem label="Cadastrar" action="#{produtoBean.carregarCadastrar}" />
+						<!--						<rich:menuItem label="Listar"	action="/tela/produto/listarProduto"  />-->
+					</rich:menuGroup>
+				</rich:dropDownMenu>
+				<rich:dropDownMenu label="Diário" popupWidth="50">
+					<rich:menuItem label="Cadastrar" action="#{diarioBean.carregarCadastrar}" />
+					<rich:menuItem label="Listar" action="/tela/diario/listarDiario" />
+				</rich:dropDownMenu>
+				<rich:dropDownMenu label="Recibo" popupWidth="50">
+					<rich:menuItem label="Gerar" action="#{reciboBean.carregarCadastrar}" />
+					<rich:menuItem label="Listar" action="/tela/recibo/listarRecibo" />
+				</rich:dropDownMenu>
+				<rich:dropDownMenu label="Estoque" popupWidth="50" disabled="true">
+					<rich:menuItem label="Entrada" action="#{diarioBean.carregarCadastrar}" />
+					<rich:menuItem label="Listar" action="/tela/diario/listarDiario" />
+				</rich:dropDownMenu>
+				<rich:dropDownMenu label="Relatório" popupWidth="50">
+					<rich:menuGroup label="Trabalhador">
+						<rich:menuItem submitMode="server" label="Função" action="#{funcaoBean.relatorioGeral}"/>
+						<rich:menuItem submitMode="server" label="Ocorrência" action="#{ocorrenciaBean.relatorioGeral}"/>
+						<rich:menuItem submitMode="server" label="Trabalhador" action="#{trabalhadorBean.relatorioGeral}"/>
+					</rich:menuGroup>
+					<rich:menuGroup label="Serviço">
+						<rich:menuItem submitMode="server" label="Geral" action="#{servicoBean.relatorioGeral}"/>
+						<rich:menuItem submitMode="server" label="Insalubridade" action="#{insalubridadeBean.relatorioGeral}"/>
+					</rich:menuGroup>
+					<rich:menuGroup label="Sistema">
+						<rich:menuItem submitMode="server" label="Usuário" action="#{usuarioBean.relatorioGeral}"/>
+						<rich:menuItem submitMode="server" label="Configuração" action="#{configuracaoBean.relatorioGeral}"/>
+					</rich:menuGroup>
+					<rich:menuItem submitMode="server" label="Responsável" action="#{responsavelBean.relatorioGeral}"/>
+					<rich:menuItem submitMode="server" label="Empresa" action="#{empresaBean.relatorioGeral}"/>
+					<rich:menuGroup label="Diário">
+						<rich:menuItem submitMode="server" label="Geral" action="#{diarioBean.relatorioGeral}"/>
+						<rich:menuItem label="Produção Serviço" action="#{diarioBean.carregarRelProducaoServico}" />
+						<!-- <rich:menuItem label="Produção Trabalhador" action="/tela/diario/relatorio/relProducaoTrabalhador" />-->
+						<rich:menuItem label="Produção" action="#{diarioBean.carregarRelProducao}" />
+					</rich:menuGroup>
+					<rich:menuSeparator id="menuSeparator1" />
+					<rich:menuItem label="Recibo"	action="/tela/recibo/relRecibo" />
+					<rich:menuItem label="Folha de Pagamento"	action="#{diarioBean.carregarRelFolhaPagamento}" />
+				</rich:dropDownMenu>
+			</rich:toolbarGroup>
+			<rich:toolbarGroup location="right" itemSeparator="line">
+				<h:outputText value="Bem vindo #{loginBean.usuario.usuario}" />
+				<rich:menuItem mode="ajax" label="Sair" onclick="document.location.href='#{facesContext.externalContext.requestContextPath}/j_spring_security_logout'" icon="#{inter.iconsair}" style="width:15px; height:15px;" />
+			</rich:toolbarGroup>
+		</rich:toolbar>
+	</h:form>
+</ui:composition>

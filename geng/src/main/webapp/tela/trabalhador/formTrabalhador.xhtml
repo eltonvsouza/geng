@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<a4j:outputPanel id="enderecoFoco">
+	<rich:jQuery timing="domready" selector="#{trabalhadorBean.foco}"	query="focus()" />
+</a4j:outputPanel>
+<!-- MÁSCARAS -->
+<rich:jQuery query="mask('999.999.999-99')" selector="#cpf"	timing="domready" />
+<rich:jQuery query="mask('99999-999')" selector="#cep" timing="domready" />
+
+<center>
+<!-- <rich:simpleTogglePanel switchType="client"	label="Dados Pessoais" height="145px" width="350px"> -->
+	<h:panelGrid columns="2">
+		<f:loadBundle basename="message_pt_BR" var="inter" />
+		<h:outputText value="*#{inter.matricula}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.matricula}"
+			maxlength="8" disabled="#{trabalhadorBean.disable}"
+			style=" width : 50px;" id="matricula"
+			converterMessage="Campo Matrícula: Apenas números são aceitos">
+		</h:inputText>
+		<h:outputText value="*#{inter.nome}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.nome}"
+			maxlength="200" style=" width:250px; align:left;" id="nome" />
+		<h:outputText value="*#{inter.mae}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.mae}"
+			maxlength="200" style=" width:250px; align:left;" id="mae" />
+		<h:outputText value="#{inter.cpf}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.cpf}" maxlength="14"
+			style=" width : 80px;" id="cpf" />
+		<h:outputText value="#{inter.rg}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.rg}" maxlength="10"
+			style=" width : 63px;" id="rg"
+			converterMessage="Campo RG: Apenas números são aceitos">
+			<f:convertNumber pattern="##########" integerOnly="true" />
+		</h:inputText>
+		<h:outputText value="*#{inter.ecivil}" style="float: right;" />
+		<h:selectOneMenu value="#{trabalhadorBean.trabalhador.ecivil}"
+			id="ecivil" style=" width : 150px;">
+			<f:selectItems value="#{geralBean.getListaGeralGrupo('estadocivil')}" />
+		</h:selectOneMenu>
+		<h:outputText value="*#{inter.sexo}" style="float: right;" />
+		<h:selectOneRadio value="#{trabalhadorBean.trabalhador.sexo}" id="sexo">
+			<f:selectItems value="#{geralBean.getListaGeralGrupo('sexo')}" />
+		</h:selectOneRadio>
+	</h:panelGrid>
+<!-- </rich:simpleTogglePanel> -->
+<!-- <rich:spacer height="10px" /> -->
+<!-- <rich:simpleTogglePanel	switchType="client" label="Endereço" height="170px" width="360px"> -->
+	<h:panelGrid columns="2">
+		<h:outputText value="#{inter.cep}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.cep}" maxlength="9"
+			style=" width : 55px;" id="cep">
+<!-- 			<a4j:support id="carregarEndereco" -->
+<!-- 				action="#{trabalhadorBean.carregarEndereco}" event="onblur" -->
+<!-- 				reRender="logradouro, bairro, cidade, uf, pais, enderecoFoco" /> -->
+		</h:inputText>
+		<h:outputText value="#{inter.pais}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.pais}"
+			maxlength="50" style=" width : 150px;" id="pais"
+			disabled="#{trabalhadorBean.disableEndereco}" />
+		<h:outputText value="#{inter.cidade}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.cidade}"
+			maxlength="100" style=" width : 150px;" id="cidade"
+			disabled="#{trabalhadorBean.disableEndereco}" />
+		<h:outputText value="#{inter.bairro}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.bairro}"
+			maxlength="100" style=" width : 150px;" id="bairro"
+			disabled="#{trabalhadorBean.disableEndereco}" />
+		<h:outputText value="#{inter.logradouro}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.logradouro}"
+			maxlength="100" style=" width : 250px;" id="logradouro"
+			disabled="#{trabalhadorBean.disableEndereco}" />
+		<h:outputText value="#{inter.numero}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.numero}"
+			maxlength="5" style=" width : 33px;" id="numero"
+			converterMessage="Campo Número: Apenas números são aceitos">
+		</h:inputText>
+		<h:outputText value="#{inter.complemento}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.complemento}"
+			maxlength="100" style=" width : 150px;" id="complemento"/>
+		<h:outputText value="#{inter.uf}" style="float: right;" />
+		<h:selectOneMenu value="#{trabalhadorBean.trabalhador.uf}" id="uf">
+			<f:selectItems value="#{ufBean.listaUf}" />
+		</h:selectOneMenu>
+	</h:panelGrid>
+<!-- </rich:simpleTogglePanel> -->
+<!-- <rich:spacer height="10px" /> -->
+<!-- <rich:simpleTogglePanel	switchType="client" label="Dados Trabalhistas" height="180px" width="545px"> -->
+	<h:panelGrid columns="2">
+		<h:outputText value="#{inter.pis}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.pis}" maxlength="11"
+			style=" width : 70px;" id="pis"
+			converterMessage="Campo PIS: Apenas números são aceitos">
+		</h:inputText>
+		<h:outputText value="*#{inter.empresa}" style="float: right;" />
+		<h:selectOneMenu value="#{trabalhadorBean.trabalhador.empresa}"
+			id="empresa">
+			<f:selectItems value="#{empresaBean.listaEmpresa}" />
+		</h:selectOneMenu>
+
+		<h:outputText value="*#{inter.ocorrencia}" style="float: right;" />
+		<h:selectOneMenu value="#{trabalhadorBean.trabalhador.ocorrencia}"
+			id="ocorrencia" style=" width : 400px;">
+			<f:selectItems value="#{ocorrenciaBean.listaOcorrencia}" />
+		</h:selectOneMenu>
+		<h:outputText value="#{inter.cbo}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.cbo}" maxlength="9"
+			style=" width : 57px;" id="cbo"
+			converterMessage="Campo CBO: Apenas números são aceitos">
+			<f:convertNumber pattern="#########" integerOnly="true" />
+		</h:inputText>
+		<h:outputText value="#{inter.ctps}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.ctps}" maxlength="7"
+			style=" width : 41px;" id="ctps" />
+
+		<h:outputText value="#{inter.serie}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.serie}"
+			maxlength="5" style=" width : 35px;" id="serie"
+			converterMessage="Campo Série: Apenas números são aceitos">
+			<f:convertNumber pattern="####" integerOnly="true" />
+		</h:inputText>
+		<h:outputText value="*#{inter.salario}" style="float: right;" />
+		<h:inputText value="#{trabalhadorBean.trabalhador.salario}"
+			maxlength="8" style=" width : 75px;" id="salario"
+			converter="doubleConverter"
+			converterMessage="Campo Salário: Formato inválido" />
+		<h:outputText value="*#{inter.funcao}" style="float: right;" />
+		<h:selectOneMenu value="#{trabalhadorBean.trabalhador.funcao}"
+			required="true" id="funcao" style=" width : 255px;"
+			requiredMessage="Campo Função: Obrigatório">
+			<f:selectItems value="#{funcaoBean.listaFuncao}" />
+			<!--		<f:converter converterId="entityConverter"/>-->
+		</h:selectOneMenu>
+		<h:outputText value="*#{inter.csindical}" style="float: right;" />
+		<h:selectBooleanCheckbox value="#{trabalhadorBean.trabalhador.csindical}" />
+	</h:panelGrid>
+<!-- </rich:simpleTogglePanel> -->
+<!-- <rich:spacer height="10px" /> -->
+<!-- <rich:simpleTogglePanel	switchType="client" label="Datas" height="120px" width="220px"> -->
+	<h:panelGrid columns="2">
+		<h:outputText value="#{inter.datanascimento}" style="float: right;" />
+		<a4j:outputPanel id="datanascimento" layout="block">
+			<rich:calendar value="#{trabalhadorBean.trabalhador.datanascimento}"
+				datePattern="dd/MM/yyyy" cellWidth="24px" cellHeight="22px"
+				style="width:200px" inputSize="7"/>
+			<!--	        locale="#{calendarBean.locale}"-->
+			<!--	        popup="#{calendarBean.popup}"-->
+			<!--	        showApplyButton="#{calendarBean.showApply}"-->
+		</a4j:outputPanel>
+		<h:outputText value="#{inter.dataadmissao}" style="float: right;" />
+		<a4j:outputPanel id="dataadmissao" layout="block">
+			<rich:calendar value="#{trabalhadorBean.trabalhador.dataadmissao}"
+				datePattern="dd/MM/yyyy" cellWidth="24px" cellHeight="22px"
+				style="width:200px" inputSize="7"/>
+		</a4j:outputPanel>
+		<h:outputText value="#{inter.dataopcao}" style="float: right;" />
+		<a4j:outputPanel id="dataopcao" layout="block">
+			<rich:calendar value="#{trabalhadorBean.trabalhador.dataopcao}"
+				datePattern="dd/MM/yyyy" cellWidth="24px" cellHeight="22px"
+				style="width:200px" inputSize="7"/>
+		</a4j:outputPanel>
+		<h:outputText value="#{inter.datademissao}" style="float: right;" />
+		<a4j:outputPanel id="datademissao" layout="block">
+			<rich:calendar value="#{trabalhadorBean.trabalhador.datademissao}"
+				datePattern="dd/MM/yyyy" cellWidth="24px" cellHeight="22px"
+				style="width:200px" inputSize="7"/>
+		</a4j:outputPanel>
+		<h:outputText value="#{inter.datamudancacontrato}"
+			style="float: right;" />
+		<a4j:outputPanel id="datamudancacontrato" layout="block">
+			<rich:calendar
+				value="#{trabalhadorBean.trabalhador.datamudancacontrato}"
+				datePattern="dd/MM/yyyy" cellWidth="24px" cellHeight="22px"
+				style="width:200px" inputSize="7"/>
+		</a4j:outputPanel>
+	</h:panelGrid>
+<!-- </rich:simpleTogglePanel> -->
+</center>
+</html>

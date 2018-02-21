@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	
+<rich:jQuery timing="onload" selector="#trabalhador" query="focus()" />
+<!-- SUGGESTION BOX TRABALHADOR -->
+<rich:suggestionbox id="suggestionBoxIdTrabalhador" for="trabalhador" tokens=",[]"
+    suggestionAction="#{trabalhadorBean.autocompleteTrabalhador}" var="trabalhador"
+    fetchValue="#{trabalhador.matricula}"
+    nothingLabel="Nenhum trabalhador encontrado" columnClasses="center"
+    border="1"
+    width="300"
+    height="100"
+    shadowOpacity="4"
+    shadowDepth="4"
+    cellpadding="1"
+    usingSuggestObjects="true">
+    <h:column>
+        <h:outputText value="#{trabalhador.matricula}" />
+    </h:column>
+    <h:column>
+        <h:outputText value="#{trabalhador.nome}" style="font-style:italic" />
+    </h:column>
+</rich:suggestionbox>
+
+<h:panelGrid columns="2">
+	<f:loadBundle basename="message" var="inter" />
+	<h:outputText value="*#{inter.trabalhador}" style="float: right;"/>
+	<h:inputText value="#{filhoBean.filho.trabalhador}" maxlength="8" id="trabalhador" style="width:50px;" tabindex="1"/>
+	
+	<h:outputText value="*#{inter.nome}" style="float: right;"/>
+	<h:inputText value="#{filhoBean.filho.nome}" maxlength="100" style=" width:250px; align:left;" id="nome"/>
+   	
+	<h:outputText value="*#{inter.mae}" style="float: right;"/>
+	<h:inputText value="#{filhoBean.filho.mae}" maxlength="100" style=" width:250px; align:left;" id="mae"/>
+	
+	<h:outputText value="*#{inter.datanascimento}" style="float: right;"/>
+	<a4j:outputPanel layout="block" id="nasc">
+	    <rich:calendar value="#{filhoBean.filho.nascimento}"
+	        datePattern="dd/MM/yyyy" id="nascimento"
+	        cellWidth="24px" cellHeight="22px" style="width:200px"/>
+    </a4j:outputPanel>
+    <rich:toolTip for="nasc" followMouse="true">
+		<span style="white-space:nowrap">
+			Só será pergmitido o registro de<br/>
+			crianças com idade até 14 anos
+		</span>
+	</rich:toolTip>
+</h:panelGrid>
+</html>

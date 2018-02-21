@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+		"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+		"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="hibernate.connection.username">root</property>
+		<property name="hibernate.connection.password">root</property>
+		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/geng</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="hibernate.show_sql">true</property>
+<!-- Configurações do pool -->
+<!-- 		<property name="hibernate.c3p0.min_size">10</property> -->
+<!-- 		<property name="hibernate.c3p0.max_size">100</property> -->
+<!-- 		<property name="hibernate.c3p0.timeout">100</property> -->
+<!-- 		<property name="hibernate.c3p0.idle_test_period">100</property> -->
+<!-- 		<property name="hibernate.c3p0.acquire_increment">1</property> -->
+<!-- 		<property name="hibernate.c3p0.max_statements">0</property> -->
+
+		<!--	FOLHA DE PAGAMENTO	-->
+		<mapping class="br.com.model.Agenda" />
+		<mapping class="br.com.model.Configuracao" />
+		<mapping class="br.com.model.Funcao" />
+		<mapping class="br.com.model.Ocorrencia" />
+		<mapping class="br.com.model.Servico" />
+		<mapping class="br.com.model.Insalubridade" />
+		<mapping class="br.com.model.Usuario" />
+		<mapping class="br.com.model.Responsavel" />
+		<mapping class="br.com.model.Empresa" />
+		<mapping class="br.com.model.Trabalhador" />
+		<mapping class="br.com.model.Filho" />
+		<mapping class="br.com.model.Diario" />
+<!-- 		<mapping class="br.com.model.Paises" /> -->
+<!-- 		<mapping class="br.com.model.Uf" /> -->
+<!-- 		<mapping class="br.com.model.Cidade" /> -->
+<!-- 		<mapping class="br.com.model.Bairro" /> -->
+<!-- 		<mapping class="br.com.model.Endereco" /> -->
+		<mapping class="br.com.model.Cnaefiscal" />
+		<mapping class="br.com.model.Geral" />
+		<mapping class="br.com.model.Recibo" />
+		<mapping class="br.com.model.Unidade" />
+<!--	ESTOQUE	-->
+<!-- 		<mapping class="br.com.model.Unidademedida" /> -->
+<!-- 		<mapping class="br.com.model.Produto" /> -->
+<!-- 		<mapping class="br.com.model.Transportadora" /> -->
+<!-- 		<mapping class="br.com.model.Veiculo" /> -->
+<!-- 		<mapping class="br.com.model.Notafiscal" /> -->
+<!-- 		<mapping class="br.com.model.Nfitem" /> -->
+<!-- 		<mapping class="br.com.model.Ncm" /> -->
+<!-- 		<mapping class="br.com.model.Cfop" /> -->
+	</session-factory>
+</hibernate-configuration>

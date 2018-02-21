@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<f:subview
+	  xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:rich="http://richfaces.org/rich"> 
+<rich:popupPanel id="mpVendaItem" width="300" height="300" header="#{inter.tcadastrar} - #{inter.tvenda} - #{inter.tproduto}">
+	<h:form>
+    	<h:panelGrid columns="2">
+			<h:outputText value="*#{inter.produto}" style="float: right;"/>
+			<a4j:outputPanel id="carregarProduto">
+				<h:selectOneMenu value="#{vendaBean.vendaItem.produto}" style="width:170px" id="produto" converter="entityConverter">
+			        <f:selectItems value="#{produtoBean.listaProduto}"/>
+			    </h:selectOneMenu>
+		    </a4j:outputPanel>
+			<h:outputText value="*#{inter.quantidade}" style="float: right;"/>
+			<h:inputText value="#{vendaBean.vendaItem.quantidade}" maxlength="10" style=" width:100px; align:left;" id="quantidade"/>
+   		</h:panelGrid>
+		<rich:collapsiblePanel switchType="client" header="Desconto" expanded="false" style="margin-left : auto; margin-right : auto; width:230px" >
+			<h:panelGrid columns="2">
+				<h:outputText value="#{inter.tipo}" style="float: right;"/>
+				<h:selectOneRadio value="#{vendaBean.vendaItem.tipodesconto}" id="tipodesconto">
+					<f:selectItems value="#{geralBean.getListaGeralGrupo('tipodesconto')}" />
+				</h:selectOneRadio>
+				<h:outputText value="#{inter.valor}" style="float: right;"/>
+				<h:inputText value="#{vendaBean.vendaItem.desconto}" maxlength="12" style=" width:100px; align:left;" id="desconto" converter="doubleConverter" converterMessage="Campo Desconto: Utilize duas casas decimais (0.00)"/>
+			</h:panelGrid>
+		</rich:collapsiblePanel>
+		<rich:panel style=" width : 145px; margin-left : auto; margin-right : auto;">
+			<a4j:commandButton actionListener="#{vendaBean.addItem}" value="Adicionar" render="tbvendaitem"/>
+			<a4j:commandButton onclick="#{rich:component('mpVendaItem')}.hide();" value="Fechar" immediate="true"/>
+		</rich:panel>
+		<ui:include src="/tela/mensagem/mensagem.xhtml" />
+	</h:form>
+</rich:popupPanel>
+</f:subview>

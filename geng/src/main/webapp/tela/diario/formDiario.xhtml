@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	
+<rich:jQuery timing="domready" selector="#trabalhador" query="focus()" />
+<rich:jQuery query="mask('99:99')" selector="#horaextra" timing="domready" />
+<f:loadBundle basename="message_pt_BR" var="inter" />
+<h:panelGrid columns="2">
+	<h:outputText value="*#{inter.data}" style="float: right;"/>
+	<a4j:outputPanel layout="block" style="width:150px;">
+	    <rich:calendar value="#{diarioBean.diario.data}"
+	        datePattern="dd/MM/yyyy" id="data" cellWidth="24px" cellHeight="22px" style="width:200px" inputSize="7"/>
+    </a4j:outputPanel>
+	<h:outputText value="*#{inter.trabalhador}" style="float: right;"/>	
+	<rich:autocomplete value="#{diarioBean.diario.trabalhador}" mode="ajax" id="autoCompleteTrabalhador" tokens=",[]" autocompleteMethod="#{trabalhadorBean.autocompleteTrabalhador}" style="width:50px;"/>
+	
+	<h:outputText value="*#{inter.servico}" style="float: right;"/>	
+	<rich:autocomplete value="#{diarioBean.diario.servico}" mode="ajax" id="autoCompleteServico" tokens=",[]" autocompleteMethod="#{servicoBean.autocompleteServico}" style="width:50px;"/>
+	
+	<h:outputText value="*#{inter.lote}" style="float: right;"/>
+	<h:inputText value="#{diarioBean.diario.lote}" maxlength="10" style=" width:63px; align:left;" id="lote" 
+							  					   validatorMessage="Campo Lote: Tamanho mínimo de 1 caracteres">
+	</h:inputText>
+
+	<h:outputText value="*#{inter.producaoacordada}" style="float: right;"/>
+	<h:inputText value="#{diarioBean.diario.producaoacordada}" maxlength="10" style=" width:63px; align:left;" id="producaoacordada" 
+			     converterMessage="Campo Produção Acordada: Apenas números são aceitos">
+		<f:convertNumber integerOnly="true" type="number" minIntegerDigits="1" maxIntegerDigits="10" maxFractionDigits="0" pattern="##########"/>
+	</h:inputText>
+   	
+   	<h:outputText value="#{inter.producaoexecutada}" style="float: right;"/>
+	<h:inputText value="#{diarioBean.diario.producaoexecutada}" maxlength="10" style=" width:63px; align:left;" id="producaoexecutada"
+				 converterMessage="Campo Produção Acordada: Apenas números são aceitos">
+		<f:convertNumber integerOnly="true" type="number" minIntegerDigits="1" maxIntegerDigits="10" maxFractionDigits="0" pattern="##########"/>
+	</h:inputText>
+	
+   	<h:outputText value="#{inter.horaextra}" style="float: right;"/>
+	<h:inputText value="#{diarioBean.diario.horaextra}" maxlength="10" style=" width:30px; align:left;" id="horaextra"
+													    converterMessage="Campo Hora Extra: Valores incorretos">
+		<f:convertDateTime pattern="HH:mm" type="time" timeZone="GMT-3" />
+	</h:inputText>
+	<rich:tooltip for="horaextra" followMouse="true">
+		<span style="white-space:nowrap">
+			Formato: HH:mm<br/>
+			Valor Máximo: 23:59
+		</span>
+	</rich:tooltip>
+</h:panelGrid>
+</html>

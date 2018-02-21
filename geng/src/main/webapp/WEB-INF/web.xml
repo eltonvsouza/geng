@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+  <display-name>geven</display-name>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:/applicationContext.xml,classpath:/security-applicationContext.xml</param-value>
+  </context-param>
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+  </listener>
+  <listener>
+    <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+  </listener>
+  <filter>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+  <context-param>
+    <param-name>org.richfaces.skin</param-name>
+    <param-value>wine</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.PROJECT_STAGE</param-name>
+    <param-value>Development</param-value>
+  </context-param>
+  <servlet>
+    <servlet-name>FacesServlet</servlet-name>
+    <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>FacesServlet</servlet-name>
+    <url-pattern>*.jsf</url-pattern>
+  </servlet-mapping>
+  <session-config>
+    <session-timeout>10</session-timeout>
+  </session-config>
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.htm</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>default.html</welcome-file>
+    <welcome-file>default.htm</welcome-file>
+    <welcome-file>default.jsp</welcome-file>
+  </welcome-file-list>
+  <context-param>
+    <param-name>com.sun.faces.expressionFactory</param-name>
+    <param-value>org.jboss.el.ExpressionFactoryImpl</param-value>
+  </context-param>
+  <error-page>
+    <exception-type>org.springframework.security.access.AccessDeniedException</exception-type>
+    <location>/error/errorAccess.jsp</location>
+  </error-page>
+  <description>caso de uma java.lang.SecurityException ele redireciona para a página de login da aplicação.</description>
+  <error-page>
+    <exception-type>java.lang.SecurityException</exception-type>
+    <location>/error/errorAccess.jsp</location>
+  </error-page>
+  <error-page>
+    <exception-type>java.lang.Exception</exception-type>
+    <location>/error/errorPage.jsf?erro=PROBLEMA AO EXIBIR A PÁGINA</location>
+  </error-page>
+  <error-page>
+    <exception-type>404</exception-type>
+    <location>/error/errorPage.jsf?erro=ESTA PÁGINA NÃO EXISTE</location>
+  </error-page>
+  <error-page>
+    <exception-type>500</exception-type>
+    <location>/error/errorPage.jsf?erro=ERRO INTERNO DO SERVIDOR</location>
+  </error-page>
+  <error-page>
+    <exception-type>503</exception-type>
+    <location>/error/errorPage.jsf?erro=O SERVIDOR ESTÁ INDISPONÍVEL NO MOMENTO</location>
+  </error-page>
+  <error-page>
+    <exception-type>org.hibernate.exception.JDBCConnectionException</exception-type>
+    <location>/error/errorPage.jsf?erro=FALHA NA COMUNICAÇÃO COM O BANCO DE DADOS</location>
+  </error-page>
+  <error-page>
+    <exception-type>java.sql.SQLException</exception-type>
+    <location>/error/errorPage.jsf?erro=PROBLEMA AO ESTABELECER CONEXÃO COM O BANCO DE DADOS</location>
+  </error-page>
+  <error-page>
+    <exception-type>org.hibernate.exception.GenericJDBCException</exception-type>
+    <location>/error/errorBanco.jsf</location>
+  </error-page>
+  <error-page>
+    <exception-type>org.hibernate.util.JDBCExceptionReporter</exception-type>
+    <location>/error/errorBanco.jsf</location>
+  </error-page>
+  <error-page>
+    <exception-type>com.mysql.jdbc.exceptions.jdbc4.CommunicationsException</exception-type>
+    <location>/error/errorBanco.jsf</location>
+  </error-page>
+  <error-page>
+    <exception-type>org.hibernate.cfg.SettingsFactory</exception-type>
+    <location>/error/errorBanco.jsf</location>
+  </error-page>
+</web-app>

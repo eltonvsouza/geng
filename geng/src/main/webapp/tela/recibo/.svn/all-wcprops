@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/eltonvs/ceng/svn/!svn/ver/5/ceng/src/main/webapp/tela/diario
+END
+listarDiario.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 81
+/eltonvs/ceng/svn/!svn/ver/75/ceng/src/main/webapp/tela/diario/listarDiario.xhtml
+END
+relRecibo.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/eltonvs/ceng/svn/!svn/ver/109/ceng/src/main/webapp/tela/diario/relRecibo.xhtml
+END
+formDiario.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/eltonvs/ceng/svn/!svn/ver/55/ceng/src/main/webapp/tela/diario/formDiario.xhtml
+END
+cadastrarDiario.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/eltonvs/ceng/svn/!svn/ver/55/ceng/src/main/webapp/tela/diario/cadastrarDiario.xhtml
+END
+alterarDiario.xhtml
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/eltonvs/ceng/svn/!svn/ver/65/ceng/src/main/webapp/tela/diario/alterarDiario.xhtml
+END

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<ui:composition template="/tela/template.xhtml">
+	<ui:define name="titulo">CENG - Folha de Pagamento</ui:define>
+	<ui:define name="conteudo">
+		<a4j:form id="cadastro">
+<rich:jQuery query="focus()" selector="#trabalhador" timing="onload" />
+			<rich:panel style=" width : 240px; margin-left : auto; margin-right : auto;">
+				<f:facet name="header">
+					<h:outputText value="Folha de Pagamento"/>
+				</f:facet>
+				<h:panelGrid columns="2">
+					<h:outputText value="*#{inter.datainicio}" style="float: right;"/>
+					<a4j:outputPanel layout="block" style="width:150px;">
+					    <rich:calendar value="#{diarioBean.dataInicio}"
+					        datePattern="dd/MM/yyyy" id="datainicio" cellWidth="24px" cellHeight="22px" style="width:200px" inputSize="7">
+					        <a4j:support event="onchanged" action="#{diarioBean.setDataFim}" reRender="datafim"/>
+				        </rich:calendar> 
+				    </a4j:outputPanel>
+				   	
+				   	<h:outputText value="*#{inter.datafim}" style="float: right;"/>
+					<a4j:outputPanel layout="block" style="width:150px;">
+					    <rich:calendar value="#{diarioBean.dataFim}"
+					        datePattern="dd/MM/yyyy" id="datafim" cellWidth="24px" cellHeight="22px" style="width:200px" inputSize="7" disabled="true"/> 
+				    </a4j:outputPanel>
+			</h:panelGrid>
+				
+				<rich:panel style=" width : 150px; margin-left : auto; margin-right : auto;">
+					<h:commandButton value="Gerar Folha de Pagamento" actionListener="#{diarioBean.relatorioFolhaPagamento}"/>
+				</rich:panel>
+				<ui:include src="/tela/mensagem/mensagem.xhtml" />
+			</rich:panel>
+		</a4j:form>
+	</ui:define>
+</ui:composition>
+</html>

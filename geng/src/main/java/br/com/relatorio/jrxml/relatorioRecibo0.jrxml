@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorioRecibo" language="groovy" pageWidth="812" pageHeight="527" columnWidth="772" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.3310000000000064"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontSize="12" isBold="true"/>
+	<style name="Detail" fontSize="12"/>
+	<parameter name="datainicio" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="datafim" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="trabalhador" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="salario" class="java.lang.Double"/>
+	<parameter name="adiantamento" class="java.lang.Double">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="sfamilialimitemenor" class="java.lang.Double"/>
+	<parameter name="sfamilialimitemaior" class="java.lang.Double"/>
+	<parameter name="sfamiliamenor" class="java.lang.Double"/>
+	<parameter name="sfamiliamaior" class="java.lang.Double"/>
+	<queryString>
+		<![CDATA[SELECT d.trabalhador, t.nome, t.cbo, d.data, d.servico, s.descricao, d.producaoacordada, f.salario AS salariofuncao,
+d.producaoexecutada, d.horaextra,hour(COALESCE(d.horaextra, 0)) AS 'hora',
+minute(COALESCE(d.horaextra, 0))/60 AS 'minuto', t.salario, t.csindical
+
+,(SELECT COUNT(*)
+  FROM diario
+  WHERE data = d.data AND
+        trabalhador = d.trabalhador
+ ) AS repeticaoservico
+
+,(
+  SELECT CAST(SEC_TO_TIME(SUM(TIME_TO_SEC(horaextra))) AS CHAR)
+ FROM diario
+ WHERE data BETWEEN $P{datainicio} AND $P{datafim} AND
+      trabalhador = d.trabalhador
+) AS horaextrasoma
+
+,COALESCE((SELECT porcentagem
+  FROM insalubridade
+  WHERE servico = d.servico
+ ),0) / 100 AS insalubridade
+
+,(SELECT COUNT(servico)
+  FROM insalubridade
+  WHERE servico = d.servico
+  ) AS insalubridadeCount
+
+,(SELECT COUNT(codigo)
+  FROM filho
+  WHERE trabalhador = d.trabalhador
+ ) AS filho
+
+,(SELECT COUNT(*)
+  FROM diario
+  WHERE producaoexecutada = 0 AND
+        d.trabalhador = trabalhador AND
+        data BETWEEN $P{datainicio} AND $P{datafim}
+) AS falta
+
+FROM diario d, servico s, trabalhador t, funcao f
+WHERE s.codigo = d.servico AND
+      t.matricula = d.trabalhador AND
+      f.codigo = t.funcao AND
+      d.data >= $P{datainicio} AND
+      d.data <= $P{datafim}
+      $P!{trabalhador}
+ORDER BY d.trabalhador, d.data]]>
+	</queryString>
+	<field name="trabalhador" class="java.lang.Integer"/>
+	<field name="nome" class="java.lang.String"/>
+	<field name="cbo" class="java.lang.String"/>
+	<field name="data" class="java.sql.Date"/>
+	<field name="servico" class="java.lang.Integer"/>
+	<field name="descricao" class="java.lang.String"/>
+	<field name="producaoacordada" class="java.lang.Long"/>
+	<field name="salariofuncao" class="java.math.BigDecimal"/>
+	<field name="producaoexecutada" class="java.lang.Long"/>
+	<field name="horaextra" class="java.sql.Time"/>
+	<field name="hora" class="java.lang.Integer"/>
+	<field name="minuto" class="java.math.BigDecimal"/>
+	<field name="salario" class="java.math.BigDecimal"/>
+	<field name="csindical" class="java.lang.Boolean"/>
+	<field name="repeticaoservico" class="java.lang.Long"/>
+	<field name="horaextrasoma" class="java.lang.String"/>
+	<field name="insalubridade" class="java.math.BigDecimal"/>
+	<field name="insalubridadeCount" class="java.lang.Long"/>
+	<field name="filho" class="java.lang.Long"/>
+	<field name="falta" class="java.lang.Long"/>
+	<variable name="insalubridade" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$F{insalubridade}*($P{salario}*$F{salariofuncao})]]></variableExpression>
+	</variable>
+	<variable name="somaproducaoexecutada" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$P{salario}]]></variableExpression>
+	</variable>
+	<variable name="salariofamilia" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{salario} <= $P{sfamilialimitemenor} ? $P{sfamiliamenor}/2.0*$F{filho} : $F{salario} <= $P{sfamilialimitemaior} ? $P{sfamiliamaior}/2.0*$F{filho} : 0.0]]></variableExpression>
+	</variable>
+	<variable name="hora" class="java.lang.Integer" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$F{hora}]]></variableExpression>
+	</variable>
+	<variable name="minuto" class="java.math.BigDecimal" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$F{minuto}]]></variableExpression>
+	</variable>
+	<variable name="filho" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="First">
+		<variableExpression><![CDATA[$F{filho}]]></variableExpression>
+	</variable>
+	<variable name="qtdservico" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Count">
+		<variableExpression><![CDATA[$F{servico}]]></variableExpression>
+	</variable>
+	<variable name="csindical" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{csindical} == true ? (($P{salario}*$F{salariofuncao})/30)*14 : 0.0]]></variableExpression>
+	</variable>
+	<variable name="repousoremunerado1" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$F{data}<=$P{datainicio}+6 && $F{producaoexecutada} != 0 ? ($P{salario}*$F{salariofuncao})/6 : 0.0]]></variableExpression>
+	</variable>
+	<variable name="repousoremunerado2" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$F{data}>=$P{datainicio}+7 && $F{producaoexecutada} != 0 ? ($P{salario}*$F{salariofuncao})/6 : 0.0]]></variableExpression>
+	</variable>
+	<variable name="insalubridadeCount" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$F{insalubridadeCount}]]></variableExpression>
+	</variable>
+	<variable name="salario" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{data}.getDay() == 6 && $F{producaoexecutada} != 0 && $F{falta} == 0 ? ( $F{repeticaoservico} > 1 ? (((($F{producaoexecutada}/$F{producaoacordada})*($P{salario}*$F{salariofuncao})) + (($F{producaoexecutada}/$F{producaoacordada})*($P{salario}*$F{salariofuncao}))*0.5+0.5))/$F{repeticaoservico} : ((($F{producaoexecutada}/$F{producaoacordada})*($P{salario}*$F{salariofuncao})) + (($F{producaoexecutada}/$F{producaoacordada})*($P{salario}*$F{salariofuncao}))*0.5+0.5)) : ( $F{repeticaoservico} > 1 ? (($F{producaoexecutada}/$F{producaoacordada})*($P{salario}*$F{salariofuncao}))/$F{repeticaoservico} : ($F{producaoexecutada}/$F{producaoacordada})*($P{salario}*$F{salariofuncao}))]]></variableExpression>
+	</variable>
+	<variable name="salariosoma" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$V{salario}]]></variableExpression>
+	</variable>
+	<variable name="hevalor" class="java.lang.Double">
+		<variableExpression><![CDATA[(($P{salario}*$F{salariofuncao})/8*1.6)*($V{hora}+$V{minuto})]]></variableExpression>
+	</variable>
+	<variable name="rrvalor" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{repousoremunerado1} < ($P{salario}*$F{salariofuncao}) && $V{repousoremunerado2} < ($P{salario}*$F{salariofuncao}) ? 0.0 : $V{repousoremunerado1} < ($P{salario}*$F{salariofuncao}) || $V{repousoremunerado2} < ($P{salario}*$F{salariofuncao}) ? (($V{salariosoma}+$V{hevalor}+$V{insalubridade})/6)/2 : ($V{salariosoma}+$V{hevalor}+$V{insalubridade})/6]]></variableExpression>
+	</variable>
+	<variable name="inss" class="java.lang.Double">
+		<variableExpression><![CDATA[($V{hevalor} + $V{insalubridade} + $V{salariosoma} + (($V{salariosoma}+$V{hevalor}+$V{insalubridade})/6))*0.08]]></variableExpression>
+	</variable>
+	<variable name="repeticaoservico" class="java.lang.Long" resetType="Group" resetGroup="trabalhador" calculation="Highest">
+		<variableExpression><![CDATA[$F{repeticaoservico}]]></variableExpression>
+	</variable>
+	<group name="trabalhador" isStartNewPage="true" footerPosition="ForceAtBottom">
+		<groupExpression><![CDATA[$F{trabalhador}]]></groupExpression>
+		<groupHeader>
+			<band height="107">
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="356" y="30" width="64" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{datainicio}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="0" y="62" width="51" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{trabalhador}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="61" y="62" width="293" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="354" y="62" width="62" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{cbo}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="0" y="0" width="260" height="46"/>
+					<textElement>
+						<font fontName="SansSerif" size="12"/>
+					</textElement>
+					<text><![CDATA[CLOTARIO ANTONIO DE SOUZA
+Engenho Nova Vida (CEI – 50.022.99357/88)
+Aliança – PE
+]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="436" y="30" width="64" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{datafim}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Transparent" x="309" y="30" width="47" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[Período:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="419" y="30" width="18" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[à]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="616" y="92" width="51" height="15"/>
+					<textElement textAlignment="Center">
+						<font fontName="SansSerif"/>
+					</textElement>
+					<text><![CDATA[Hora Extra]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="123">
+				<staticText>
+					<reportElement mode="Transparent" x="98" y="0" width="181" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[- Repouso Remunerado]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="98" y="12" width="181" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[- Horas Extras no Período (60%)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="98" y="24" width="181" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[- Adicional Insalubridade (20%)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="98" y="36" width="181" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[- Salário Família no Período (Filhos)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="98" y="48" width="181" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[- Inss]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="98" y="60" width="181" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[- Contribuição Sindical]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="98" y="72" width="181" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[- Adiantamento de Salário]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="454" y="24" width="55" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{insalubridade}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="509" y="73" width="55" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{adiantamento}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="509" y="97" width="55" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($V{hevalor} + $V{insalubridade} + $V{salariosoma} + $V{salariofamilia} + $V{rrvalor}) - ($V{inss} + $V{csindical} + $P{adiantamento})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="454" y="36" width="55" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{salariofamilia}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="454" y="12" width="55" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{hevalor}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="409" y="36" width="46" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{filho}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+					<reportElement x="61" y="110" width="52" height="13"/>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" size="10" isBold="false"/>
+					</textElement>
+					<textFieldExpression><![CDATA[($P{salario}*$F{salariofuncao})]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement mode="Transparent" x="387" y="110" width="49" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[0,00]]></text>
+				</staticText>
+				<staticText>
+					<reportElement mode="Transparent" x="456" y="110" width="49" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<text><![CDATA[0,00]]></text>
+				</staticText>
+				<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+					<reportElement x="509" y="49" width="55" height="13"/>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{inss}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="156" y="110" width="47" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{hevalor} + $V{insalubridade} + $V{salariosoma} + $V{rrvalor}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="232" y="110" width="47" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{hevalor} + $V{insalubridade} + $V{salariosoma} + $V{rrvalor}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+					<reportElement x="509" y="61" width="55" height="13"/>
+					<textElement textAlignment="Right">
+						<font fontName="SansSerif" size="10"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{csindical}]]></textFieldExpression>
+				</textField>
+				<elementGroup>
+					<elementGroup/>
+				</elementGroup>
+				<textField pattern="###0" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="409" y="24" width="46" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{insalubridadeCount}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true" pattern="HH:mm" isBlankWhenNull="false">
+					<reportElement mode="Transparent" x="409" y="12" width="46" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{horaextrasoma}.equals(null) ? "00:00:00" : $F{horaextrasoma}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="454" y="0" width="55" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{rrvalor}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="456" y="85" width="54" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{salariosoma} + $V{hevalor} + $V{insalubridade} + $V{salariofamilia} + $V{rrvalor}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="509" y="85" width="55" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{inss} + $V{csindical} + $P{adiantamento}]]></textFieldExpression>
+				</textField>
+				<textField pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="309" y="110" width="54" height="13" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{inss}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="14" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy EEE" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="0" y="0" width="98" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{data}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="98" y="0" width="265" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{servico} + " - " + $F{descricao}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="363" y="0" width="46" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{producaoacordada}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="409" y="0" width="46" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{producaoexecutada}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="454" y="0" width="56" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{salario}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="HH:mm" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="616" y="0" width="51" height="14" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{horaextra}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

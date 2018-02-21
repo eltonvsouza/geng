@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	
+<rich:jQuery timing="onload" selector="#trabalhador" query="focus()" />
+<rich:jQuery query="mask('09:99')" selector="#horaextra" timing="onload" />
+<!-- SUGGESTION BOX TRABALHADOR -->
+<rich:suggestionbox id="suggestionBoxIdTrabalhador" for="trabalhador" tokens=",[]"
+    suggestionAction="#{trabalhadorBean.autocompleteTrabalhador}" var="trabalhador"
+    fetchValue="#{trabalhador.matricula}"
+    nothingLabel="Nenhum trabalhador encontrado" columnClasses="center"
+    border="1"
+    width="300"
+    height="100"
+    shadowOpacity="4"
+    shadowDepth="4"
+    cellpadding="1"
+    usingSuggestObjects="true">
+    <h:column>
+        <h:outputText value="#{trabalhador.matricula}" />
+    </h:column>
+    <h:column>
+        <h:outputText value="#{trabalhador.nome}" style="font-style:italic" />
+    </h:column>
+</rich:suggestionbox>
+<!-- SUGGESTION BOX TRABALHADOR -->
+<rich:suggestionbox id="suggestionBoxIdServico" for="servico" tokens=",[]"
+		    suggestionAction="#{servicoBean.autocompleteServico}" var="servico"
+		    fetchValue="#{servico.codigo}"
+		    nothingLabel="Nenhum servico encontrado" columnClasses="center"
+		    border="1"
+		    width="300"
+		    height="100"
+		    shadowOpacity="4"
+		    shadowDepth="4"
+		    cellpadding="1"
+		    usingSuggestObjects="true">
+		    <h:column>
+		        <h:outputText value="#{servico.codigo}" />
+		    </h:column>
+		    <h:column>
+		        <h:outputText value="#{servico.descricao}" style="font-style:italic" />
+		    </h:column>
+		</rich:suggestionbox>
+<h:panelGrid columns="2">
+	<f:loadBundle basename="message" var="inter" />
+	<h:outputText value="*#{inter.data}" style="float: right;"/>
+	<a4j:outputPanel layout="block" style="width:150px;">
+	    <rich:calendar value="#{diarioBean.diario.data}"
+	        datePattern="dd/MM/yyyy" id="data" cellWidth="24px" cellHeight="22px" style="width:200px"/>
+    </a4j:outputPanel>
+	<h:outputText value="*#{inter.trabalhador}" style="float: right;"/>	
+	<h:inputText value="#{diarioBean.diario.trabalhador}" maxlength="8" id="trabalhador" style="width:50px;"/>
+	
+	<h:outputText value="*#{inter.servico}" style="float: right;"/>	
+	<h:inputText value="#{diarioBean.diario.servico}" maxlength="8" id="servico" style="width:50px;"/>
+	
+	<h:outputText value="*#{inter.lote}" style="float: right;"/>
+	<h:inputText value="#{diarioBean.diario.lote}" maxlength="10" style=" width:63px; align:left;" id="lote" 
+							  					   validatorMessage="Campo Lote: Tamanho mínimo de 1 caracteres">
+		<f:validateLength minimum="1" maximum="10" />
+	</h:inputText>
+
+	<h:outputText value="*#{inter.producaoacordada}" style="float: right;"/>
+	<h:inputText value="#{diarioBean.diario.producaoacordada}" maxlength="10" style=" width:63px; align:left;" id="producaoacordada" 
+			     converterMessage="Campo Produção Acordada: Apenas números são aceitos">
+		<f:convertNumber integerOnly="true" type="number" minIntegerDigits="1" maxIntegerDigits="10" maxFractionDigits="0" pattern="##########"/>
+	</h:inputText>
+   	
+   	<h:outputText value="#{inter.producaoexecutada}" style="float: right;"/>
+	<h:inputText value="#{diarioBean.diario.producaoexecutada}" maxlength="10" style=" width:63px; align:left;" id="producaoexecutada"
+				 converterMessage="Campo Produção Acordada: Apenas números são aceitos">
+		<f:convertNumber integerOnly="true" type="number" minIntegerDigits="1" maxIntegerDigits="10" maxFractionDigits="0" pattern="##########"/>
+	</h:inputText>
+	
+   	<h:outputText value="#{inter.horaextra}" style="float: right;"/>
+	<h:inputText value="#{diarioBean.diario.horaextra}" maxlength="10" style=" width:30px; align:left;" id="horaextra"
+													    converterMessage="Campo Hora Extra: Valores incorretos">
+		<f:convertDateTime pattern="HH:mm" type="time" timeZone="GMT-3" />
+	</h:inputText>
+	<rich:toolTip for="horaextra" followMouse="true">
+		<span style="white-space:nowrap">
+			Formato: HH:mm<br/>
+			Valor Máximo: 09:59
+		</span>
+	</rich:toolTip>
+	<a4j:loadScript src="/javascript/jquery.maskedinput-1.2.2.js"/>
+</h:panelGrid>
+</html>

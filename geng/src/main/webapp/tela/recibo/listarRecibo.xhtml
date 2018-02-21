@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	
+<ui:composition template="/tela/template.xhtml">
+	<ui:define name="titulo">#{inter.tsistema} - #{inter.tlistar} - #{inter.trecibo}</ui:define>
+	<ui:define name="conteudo">
+		<h:outputStylesheet>
+	        .even-row {
+	        background-color: #FCFFFE;
+	        }
+	 
+	        .odd-row {
+	        background-color: #ECF3FE;
+	        }
+	 
+	        .active-row {
+	        background-color: #FFEBDA !important;
+	        cursor: pointer;
+	        }
+		</h:outputStylesheet>
+		<f:loadBundle basename="message_pt_BR" var="inter" />
+		<h:form>
+			<rich:panel style=" width : 675px; margin-left : auto; margin-right : auto;" header="#{inter.tlistar} - #{inter.trecibo}">
+				<a4j:outputPanel ajaxRendered="true">
+	       			<rich:dataTable id="lista" value="#{reciboBean.recibos}" var="recibo" rows="18" 
+				       				rowClasses="odd-row, even-row" styleClass="stable" style="align:center; width:655px">
+	       				<f:facet name="header">
+	               			<rich:columnGroup>
+	                   			<rich:column width="10px">
+	                   				<h:outputText value="Trabalhador" />
+	                   			</rich:column>
+	                   			<rich:column width="10px">
+	                   				<h:outputText value="DT Início" />
+	                   			</rich:column>
+	                   			<rich:column width="10px">
+	                   				<h:outputText value="DT Fim" />
+	                   			</rich:column>
+	                   			<rich:column width="10px">
+	                   				<h:outputText value="R.Remunerado"/>
+	                   			</rich:column>
+	                   			<rich:column width="10px">
+	                   				<h:outputText value="S.Família" />
+	                   			</rich:column>
+	                   			<rich:column width="10px">
+	                   				<h:outputText value="H.Extra" />
+	                   			</rich:column>
+	                   			<rich:column width="10px">
+	                   				<h:outputText value="Insalubridade" />
+	                   			</rich:column>
+	                   			<rich:column>
+	                   				<h:outputText value="Salário" />
+	                   			</rich:column>
+	                   			<rich:column>
+	                   				<h:outputText value="Alterar" />
+	                   			</rich:column>
+	                   			<rich:column>
+	                   				<h:outputText value="Excluir" />
+	                   			</rich:column>
+	               			</rich:columnGroup>
+	           			</f:facet>
+	           			<rich:column>
+	               			<h:outputText value="#{recibo.trabalhador}"/>
+	           			</rich:column>
+	           			<rich:column style="text-align:center;">
+	               			<h:outputText value="#{recibo.datainicio}">
+	               				<f:convertDateTime pattern="dd/MM/yyyy"/>
+	               			</h:outputText>
+	           			</rich:column>
+	           			<rich:column style="text-align:center;">
+	               			<h:outputText value="#{recibo.datafim}">
+	               				<f:convertDateTime pattern="dd/MM/yyyy"/>
+	               			</h:outputText>
+	           			</rich:column>
+	           			<rich:column style="text-align:right;">
+	               			<h:outputText value="#{recibo.vrremunerado}">
+	               				<f:convertNumber pattern="##0.00"/>
+	               			</h:outputText>
+	           			</rich:column>
+	           			<rich:column style="text-align:right;">
+	               			<h:outputText value="#{recibo.vsfamilia}">
+	               				<f:convertNumber pattern="##0.00"/>
+	               			</h:outputText>
+	           			</rich:column>
+	           			<rich:column style="text-align:right;">
+	               			<h:outputText value="#{recibo.vhoraextra}">
+	               				<f:convertNumber pattern="##0.00"/>
+	               			</h:outputText>
+	           			</rich:column>
+	           			<rich:column style="text-align:right;">
+	               			<h:outputText value="#{recibo.vinsalubridade}">
+	               				<f:convertNumber pattern="##0.00"/>
+	               			</h:outputText>
+	           			</rich:column>
+	           			<rich:column style="text-align:right;">
+	               			<h:outputText value="#{recibo.ssalario}">
+	               				<f:convertNumber pattern="####0.00"/>
+	               			</h:outputText>
+	           			</rich:column>
+	           			<rich:column style="text-align:center">
+							<a4j:commandLink ajaxSingle="true" action="#{reciboBean.carregarAlterar}" style="text-decoration:none;">
+								<f:setPropertyActionListener value="#{recibo.codigo}" target="#{reciboBean.idBusca}" />
+								<h:graphicImage style="border:0; width:16px;" value="#{inter.iconeditar}" />
+							</a4j:commandLink>
+						</rich:column>
+	           			<rich:column width="40px" style="text-align:center">
+							<a4j:commandLink action="#{modalPanelQuestion.setaAtributos}" oncomplete="#{rich:component('mpQuestion')}.show();" style="margin-left:auto; margin-right:auto;">
+								<f:setPropertyActionListener value="#{recibo.codigo}" target="#{reciboBean.idBusca}" />
+								<f:setPropertyActionListener value="recibo" target="#{modalPanelQuestion.entidade}" />
+								<f:setPropertyActionListener value="excluir" target="#{modalPanelQuestion.tipo}" />
+								<h:graphicImage style="border-width:0; left:50%; right:50%; width:16px;" value="#{inter.iconlixeira}" />
+							</a4j:commandLink>
+						</rich:column>
+						<f:facet name="footer">
+			            	<rich:dataScroller for="lista" maxPages="20" id="ds" />
+		            	</f:facet>
+			        </rich:dataTable>
+		        </a4j:outputPanel>
+            	<ui:include src="/tela/mensagem/mensagem.xhtml" />
+		        <h:commandLink style="float:center;" id="pdf" action="#{reciboBean.relatorioGeral}">
+		        	<h:graphicImage style="border-width:0; left:50%; right:50%; width:30px;" value="#{inter.iconimpressora}" />
+	       			<rich:tooltip value="Imprimir em PDF" for="pdf" followMouse="true"/>
+		        </h:commandLink>
+			</rich:panel>
+		</h:form>
+		<ui:include src="/tela/mpQuestion.xhtml" />
+	</ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+	<h:head>
+	</h:head>
+<h:body onload="main(document.getElementById('graphContainer'))">
+<ui:composition template="/tela/template.xhtml">
+	<ui:define name="titulo"><h:outputText value="#{inter.tsistema} - #{inter.tcadastrar} - #{inter.torganograma}" /></ui:define>
+	<ui:define name="conteudo">
+		<h:form id="cadastro">
+			<rich:panel style=" width : 370px; margin-left : auto; margin-right : auto;" header="#{inter.tvisualizar} - #{inter.torganograma}">
+				<script type='text/javascript' src='https://www.google.com/jsapi'></script>
+			 	<h:outputScript id="org">
+					google.load('visualization', '1', {packages:['orgchart']});
+					google.setOnLoadCallback(drawChart);
+					function drawChart() {
+						var data = new google.visualization.DataTable();
+						data.addColumn('string', 'Name');
+						data.addColumn('string', 'Manager');
+						data.addColumn('string', 'ToolTip');
+						data.addRows([
+     						<h:outputText value="#{organogramaBean.text}" />        
+  						]);
+						var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+						chart.draw(data, {allowHtml:true});
+ 					}
+			 	</h:outputScript>
+				<div id='chart_div'></div>
+			</rich:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>
+</h:body>
+</html>

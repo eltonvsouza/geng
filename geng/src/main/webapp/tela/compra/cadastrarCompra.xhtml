@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<ui:composition template="/tela/template.xhtml">
+	<ui:define name="titulo"><h:outputText value="#{inter.tsistema} - #{inter.tcadastrar} - #{inter.tcompra}" /></ui:define>
+	<ui:define name="conteudo">
+		<h:form id="cadastro" rendered="true">
+			<rich:panel style=" width : 750px; margin-left : auto; margin-right : auto;" header="#{inter.tcadastrar} - #{inter.tcompra}">
+				<ui:include src="formCompra.xhtml"/>
+				<rich:panel style=" width : 320px; margin-left : auto; margin-right : auto;">
+					<a4j:commandButton value="#{inter.btcadastrar}" action="#{compraBean.cadastrar}" style="width:70px" render="panel"/>
+					<h:commandButton disabled="true" value="#{inter.btalterar}" style="width:70px"/>
+					<h:commandButton disabled="true" value="#{inter.btcancelar}" style="width:70px"/>
+					<a4j:commandButton value="#{inter.btlimpar}" type="reset" action="#{compraBean.limpar}" render="tbcompraitem" immediate="true" style="width:70px"/>
+				</rich:panel>
+				<ui:include src="/tela/mensagem/mensagem.xhtml" />
+			</rich:panel>
+		</h:form>
+		<ui:include src="/tela/compra/mpCompraItem.xhtml" />
+	</ui:define>
+</ui:composition>
+</html>

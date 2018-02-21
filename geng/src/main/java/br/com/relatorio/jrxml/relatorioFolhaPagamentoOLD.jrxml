@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="relatorioFolhaPagamento" language="groovy" pageWidth="527" pageHeight="812" columnWidth="487" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true">
+	<property name="ireport.zoom" value="1.3310000000000006"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Title" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontSize="12" isBold="true"/>
+	<style name="Detail" fontSize="12"/>
+	<parameter name="logo" class="java.lang.Object"/>
+	<parameter name="datainicio" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="datafim" class="java.util.Date">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="trabalhador" class="java.lang.String">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<parameter name="salario" class="java.lang.Double"/>
+	<parameter name="sfamilialimitemenor" class="java.lang.Double"/>
+	<parameter name="sfamilialimitemaior" class="java.lang.Double"/>
+	<parameter name="sfamiliamenor" class="java.lang.Double"/>
+	<parameter name="sfamiliamaior" class="java.lang.Double"/>
+	<queryString>
+		<![CDATA[SELECT d.trabalhador, t.nome, t.cbo, d.data, d.servico, s.descricao, d.producaoacordada, f.salario AS salariofuncao,
+d.producaoexecutada, d.horaextra,hour(COALESCE(d.horaextra, 0)) AS 'hora',
+minute(COALESCE(d.horaextra, 0))/60 AS 'minuto', t.salario, t.csindical
+
+,(
+  SELECT CAST(SEC_TO_TIME(SUM(TIME_TO_SEC(horaextra))) AS CHAR)
+ FROM diario
+ WHERE data BETWEEN $P{datainicio} AND $P{datafim} AND
+      trabalhador = d.trabalhador
+) AS horaextrasoma
+
+,COALESCE((SELECT porcentagem
+  FROM insalubridade
+  WHERE servico = d.servico
+ ),0) / 100 AS insalubridade
+
+,(SELECT COUNT(servico)
+  FROM insalubridade
+  WHERE servico = d.servico
+  ) AS insalubridadeCount
+
+,(SELECT COUNT(codigo)
+  FROM filho
+  WHERE trabalhador = d.trabalhador
+ ) AS filho
+
+,(SELECT COUNT(*)
+  FROM diario
+  WHERE producaoexecutada = 0 AND
+        d.trabalhador = trabalhador AND
+        data BETWEEN $P{datainicio} AND $P{datafim}
+) AS falta
+
+FROM diario d, servico s, trabalhador t, funcao f
+WHERE s.codigo = d.servico AND
+      t.matricula = d.trabalhador AND
+      f.codigo = t.funcao AND
+      d.data >= $P{datainicio} AND
+      d.data <= $P{datafim}
+ORDER BY d.trabalhador, d.data]]>
+	</queryString>
+	<field name="trabalhador" class="java.lang.Integer"/>
+	<field name="nome" class="java.lang.String"/>
+	<field name="cbo" class="java.lang.String"/>
+	<field name="data" class="java.sql.Date"/>
+	<field name="servico" class="java.lang.Integer"/>
+	<field name="descricao" class="java.lang.String"/>
+	<field name="producaoacordada" class="java.lang.Long"/>
+	<field name="salariofuncao" class="java.math.BigDecimal"/>
+	<field name="producaoexecutada" class="java.lang.Long"/>
+	<field name="horaextra" class="java.sql.Time"/>
+	<field name="hora" class="java.lang.Integer"/>
+	<field name="minuto" class="java.math.BigDecimal"/>
+	<field name="salario" class="java.math.BigDecimal"/>
+	<field name="csindical" class="java.lang.Boolean"/>
+	<field name="horaextrasoma" class="java.lang.String"/>
+	<field name="insalubridade" class="java.math.BigDecimal"/>
+	<field name="insalubridadeCount" class="java.lang.Long"/>
+	<field name="filho" class="java.lang.Long"/>
+	<field name="falta" class="java.lang.Long"/>
+	<variable name="insalubridade" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$F{insalubridade}*($P{salario}*$F{salariofuncao})]]></variableExpression>
+	</variable>
+	<variable name="somaproducaoexecutada" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$P{salario}]]></variableExpression>
+	</variable>
+	<variable name="salariofamilia" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{salario} <= $P{sfamilialimitemenor} ? $P{sfamiliamenor}/2.0*$F{filho} : $F{salario} <= $P{sfamilialimitemaior} ? $P{sfamiliamaior}/2.0*$F{filho} : 0.0]]></variableExpression>
+	</variable>
+	<variable name="hora" class="java.lang.Integer" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$F{hora}]]></variableExpression>
+	</variable>
+	<variable name="minuto" class="java.math.BigDecimal" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$F{minuto}]]></variableExpression>
+	</variable>
+	<variable name="filho" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="First">
+		<variableExpression><![CDATA[$F{filho}]]></variableExpression>
+	</variable>
+	<variable name="qtdservico" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Count">
+		<variableExpression><![CDATA[$F{servico}]]></variableExpression>
+	</variable>
+	<variable name="csindical" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{csindical} == true ? (($P{salario}*$F{salariofuncao})/30)*14 : 0.0]]></variableExpression>
+	</variable>
+	<variable name="repousoremunerado1" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$F{data}<=$P{datainicio}+6 && $F{producaoexecutada} != 0 ? ($P{salario}*$F{salariofuncao})/6 : 0.0]]></variableExpression>
+	</variable>
+	<variable name="repousoremunerado2" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$F{data}>=$P{datainicio}+7 && $F{producaoexecutada} != 0 ? ($P{salario}*$F{salariofuncao})/6 : 0.0]]></variableExpression>
+	</variable>
+	<variable name="insalubridadeCount" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$F{insalubridadeCount}]]></variableExpression>
+	</variable>
+	<variable name="salario" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{data}.getDay() == 6 && $F{producaoexecutada} != 0 && $F{falta} == 0 ? (($F{producaoexecutada}/$F{producaoacordada})*0.5+0.5)*$P{salario}*$F{salariofuncao} : ($F{producaoexecutada}/$F{producaoacordada})*($P{salario}*$F{salariofuncao})]]></variableExpression>
+	</variable>
+	<variable name="salariosoma" class="java.lang.Double" resetType="Group" resetGroup="trabalhador" calculation="Sum">
+		<variableExpression><![CDATA[$V{salario}]]></variableExpression>
+	</variable>
+	<variable name="hevalor" class="java.lang.Double">
+		<variableExpression><![CDATA[(($P{salario}*$F{salariofuncao})/8*1.6)*($V{hora}+$V{minuto})]]></variableExpression>
+	</variable>
+	<variable name="rrvalor" class="java.lang.Double">
+		<variableExpression><![CDATA[$V{repousoremunerado1} < ($P{salario}*$F{salariofuncao}) && $V{repousoremunerado2} < ($P{salario}*$F{salariofuncao}) ? 0.0 : $V{repousoremunerado1} < ($P{salario}*$F{salariofuncao}) || $V{repousoremunerado2} < ($P{salario}*$F{salariofuncao}) ? (($V{salariosoma}+$V{hevalor}+$V{insalubridade})/6)/2 : ($V{salariosoma}+$V{hevalor}+$V{insalubridade})/6]]></variableExpression>
+	</variable>
+	<variable name="inss" class="java.lang.Double">
+		<variableExpression><![CDATA[($V{hevalor} + $V{insalubridade} + $V{salariosoma} + (($V{salariosoma}+$V{hevalor}+$V{insalubridade})/6))*0.08]]></variableExpression>
+	</variable>
+	<group name="trabalhador">
+		<groupExpression><![CDATA[$F{trabalhador}]]></groupExpression>
+		<groupHeader>
+			<band/>
+		</groupHeader>
+		<groupFooter>
+			<band height="16">
+				<textField isStretchWithOverflow="true" pattern="#,##0.00" isBlankWhenNull="true">
+					<reportElement mode="Transparent" x="436" y="0" width="51" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+					<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+						<font fontName="Serif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+						<paragraph lineSpacing="Single"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{salariosoma} + $V{hevalor} + $V{insalubridade} + $V{salariofamilia} + $V{rrvalor}]]></textFieldExpression>
+				</textField>
+				<elementGroup>
+					<elementGroup/>
+				</elementGroup>
+				<textField>
+					<reportElement x="0" y="0" width="197" height="16"/>
+					<textElement/>
+					<textFieldExpression><![CDATA[$F{trabalhador} + " - " + $F{nome}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="67" splitType="Stretch">
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="47" y="51" width="64" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Serif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{datainicio}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement mode="Transparent" x="127" y="51" width="64" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Serif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{datafim}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="51" width="47" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Serif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Período:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="110" y="51" width="18" height="16" forecolor="#000000" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Center" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="Serif" size="12" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[à]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="SubTitle" x="0" y="32" width="487" height="19"/>
+				<textElement textAlignment="Right">
+					<font size="15"/>
+				</textElement>
+				<text><![CDATA[CENG - Controle do Engenho]]></text>
+			</staticText>
+			<staticText>
+				<reportElement style="Title" x="0" y="0" width="363" height="33"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Folha de Pagamento]]></text>
+			</staticText>
+			<image scaleImage="RetainShape" hAlign="Center" vAlign="Middle">
+				<reportElement mode="Opaque" x="454" y="-1" width="33" height="33" forecolor="#FFFFFF"/>
+				<imageExpression><![CDATA[$P{logo}]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="16" splitType="Stretch">
+			<staticText>
+				<reportElement mode="Transparent" x="436" y="0" width="51" height="16" forecolor="#666666" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Right" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Salário]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Transparent" x="0" y="0" width="197" height="16" forecolor="#666666" backcolor="#FFFFFF"/>
+				<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" markup="none">
+					<font fontName="SansSerif" size="12" isBold="true" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Helvetica" pdfEncoding="Cp1252" isPdfEmbedded="false"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Trabalhador]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="15" width="487" height="1"/>
+			</line>
+		</band>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="1" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="487" height="1"/>
+			</line>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="13" splitType="Stretch">
+			<textField>
+				<reportElement style="Column header" x="367" y="0" width="80" height="13"/>
+				<textElement textAlignment="Right">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField pattern="EEEEE dd MMMMM yyyy">
+				<reportElement style="Column header" x="0" y="0" width="197" height="13"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement style="Column header" x="447" y="0" width="40" height="13"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

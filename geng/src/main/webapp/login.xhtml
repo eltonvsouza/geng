@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<h:head>
+	<title>#{inter.tsistema} - #{inter.tlogin}</title>
+	<link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="#{inter.confcss}" media="screen" />
+	<link rel="shortcut icon" href="#{inter.iconcana}" type="image/icon"/>
+	<f:loadBundle basename="message_pt_BR" var="inter" />
+</h:head>
+<h:body>
+<rich:jQuery timing="domready" selector="#j_username" query="focus()" />
+<div id="container">
+	<div id="header">
+		<div id="logo" style=" width : 500px;">NOVA VIDA - Gestão do Engenho</div>
+		<div id="top"></div>
+		<div id="menu"/>
+	</div>
+	<div id="content">
+		<div id="left">
+			<rich:panel id="login" style="width : 160px; margin-left : auto; margin-right : auto;">
+				<f:facet name="header">
+	                <h:outputText value="Login" id="out1"/>
+	            </f:facet>
+	            <form action="j_spring_security_check" method="post" id="form">
+	            	<h:panelGrid columns="2" id="pg1" border="0">
+		                <h:outputText value="#{inter.usuario}" style="float: right;" />
+		                <h:inputText id="j_username" maxlength="10" style="float: left; width:80px;"/>
+		                <h:outputText value="#{inter.senha}" style="float: right;"/>
+		                <h:inputSecret id="j_password" maxlength="10" style="float: left; width:80px;" />
+						<input type="submit" value="#{inter.btentrar}"/>
+	            	</h:panelGrid>
+          			<h:outputText value="Usuário ou senha incorretos!" rendered="#{param.erro}" style="color: red" id="ot2"/>
+          			<h:outputText value="Sua licança expirou!" rendered="#{param.license}" style="color: red"/>
+           		</form>
+	        </rich:panel>
+		</div>
+		<div id="footerline"/>
+	</div>
+	<div id="footer">#{inter.tsistema} - Gestão do Engenho - 2012.</div>	
+</div>
+</h:body>
+</html>

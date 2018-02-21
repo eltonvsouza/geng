@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<a4j:outputPanel id="enderecoFoco" >
+	<rich:jQuery timing="domready" selector="#{responsavelBean.foco}" query="focus()"/>
+</a4j:outputPanel>
+<!-- MÁSCARAS rich:JQeury -->
+<rich:jQuery query="mask('(99)9999-9999')" selector="#telefone" timing="domready" />
+<rich:jQuery query="mask('(99)9999-9999')" selector="#celular" timing="domready" />
+<rich:jQuery query="mask('99999-999')" selector="#cep" timing="domready" />
+<!-- MÁSCARA dinâmica do campo inscrição -->
+<a4j:outputPanel id="panelMask">
+	<h:panelGroup rendered="#{responsavelBean.responsavel.tipo == 'cnpj'}">
+		<rich:jQuery query="mask('99.999.999/9999-99')" timing="domready" selector="#inscricao"/>
+	</h:panelGroup>
+	<h:panelGroup rendered="#{responsavelBean.responsavel.tipo == 'cei'}">
+		<rich:jQuery query="mask('999.999.99.99/99')" selector="#inscricao"/>
+	</h:panelGroup>
+	<h:panelGroup rendered="#{responsavelBean.responsavel.tipo == 'cpf'}">
+		<rich:jQuery query="mask('999.999.999-99')" selector="#inscricao"/>
+	</h:panelGroup>
+	<rich:jQuery timing="domready" selector="#inscricao" query="focus()" />
+</a4j:outputPanel>
+<!-- MÁSCARA dinâmica do campo inscrição fornecedor -->
+<a4j:outputPanel id="panelMaskF">
+	<h:panelGroup rendered="#{responsavelBean.responsavel.tipofornecedor == 'cnpj'}">
+		<rich:jQuery timing="domready" query="mask('99.999.999/9999-99')" selector="#inscricaofornecedor"/>
+	</h:panelGroup>
+	<h:panelGroup rendered="#{responsavelBean.responsavel.tipofornecedor == 'cei'}">
+		<rich:jQuery query="mask('999.999.99.99/99')" selector="#inscricaofornecedor"/>
+	</h:panelGroup>
+	<h:panelGroup rendered="#{responsavelBean.responsavel.tipofornecedor == 'cpf'}">
+		<rich:jQuery query="mask('999.999.999-99')" selector="#inscricaofornecedor"/>
+	</h:panelGroup>
+<!-- 	<rich:jQuery selector="#inscricaofornecedor" timing="onJScall" name="focusF" query="focus()"/> -->
+</a4j:outputPanel>
+
+	<f:loadBundle basename="message_pt_BR" var="inter" />
+	<center>
+<!-- 	<rich:simpleTogglePanel switchType="client" label="Dados Pessoais" height="150px" width="350px"> -->
+		<h:panelGrid columns="2">
+			<h:outputText value="*#{inter.tipo}" style="float: right;"/>
+			<h:selectOneRadio value="#{responsavelBean.responsavel.tipo}" id="tipo">
+<!-- 		        <a4j:support event="onclick" ajaxSingle="true" reRender="panelMask, panelInscr" /> -->
+			    <f:selectItem itemLabel="CNPJ" itemValue="cnpj"/>
+			    <f:selectItem itemLabel="CEI" itemValue="cei"/>
+			    <f:selectItem itemLabel="CPF" itemValue="cpf"/>
+		    </h:selectOneRadio>
+			<h:outputText value="*#{inter.inscricao}" style="float: right;"/>
+			<a4j:outputPanel id="panelInscr">
+				<h:inputText value="#{responsavelBean.responsavel.inscricao}" maxlength="18" style=" width:100px; align:left;" id="inscricao"/>
+			</a4j:outputPanel>
+			<h:outputText value="*#{inter.razaosocial}" style="float: right;"/>
+			<h:inputText value="#{responsavelBean.responsavel.rasaosocial}" maxlength="100" style=" width:250px; align:left;" id="rasaosocial" required="false"/>
+			<h:outputText value="#{inter.nome}" style="float: right;"/>
+			<h:inputText value="#{responsavelBean.responsavel.nome}" maxlength="200" style=" width:250px; align:left;" id="nome"/>
+			<h:outputText value="#{inter.telefone}" style="float: right;"/>
+			<h:inputText value="#{responsavelBean.responsavel.telefone}" maxlength="13" required="false" style=" width : 75px;" id="telefone"/>
+			<h:outputText value="#{inter.celular}" style="float: right;"/>
+			<h:inputText value="#{responsavelBean.responsavel.celular}" maxlength="13" required="false" style=" width : 75px;" id="celular"/>
+			<h:outputText value="#{inter.email}" style="float: right;"/>
+			<h:inputText value="#{responsavelBean.responsavel.email}" maxlength="50" required="false" style=" width : 150px;" id="email"/>
+		</h:panelGrid>
+<!-- 	</rich:simpleTogglePanel> -->
+<!-- 	<rich:spacer height="10px"/> -->
+<!-- 	<rich:simpleTogglePanel switchType="client" label="Endereço" height="150px" width="350px"> -->
+		<h:panelGrid columns="2">
+			<h:outputText value="#{inter.cep}" style="float: right;"/>
+			<h:inputText value="#{responsavelBean.responsavel.cep}" maxlength="9" style=" width : 55px;" id="cep">
+<!-- 				<a4j:support id="carregarEndereco" action="#{responsavelBean.carregarEndereco}" event="onblur" reRender="logradouro, bairro, cidade, uf, pais, enderecoFoco"/> -->
+			</h:inputText>
+				<h:outputText value="#{inter.pais}" style="float: right;"/>
+				<h:inputText value="#{responsavelBean.responsavel.pais}" maxlength="50" style=" width : 150px;" id="pais" disabled="#{responsavelBean.disableEndereco}"/>
+				<h:outputText value="#{inter.cidade}" style="float: right;"/>
+				<h:inputText value="#{responsavelBean.responsavel.cidade}" maxlength="100" style=" width : 150px;" id="cidade" disabled="#{responsavelBean.disableEndereco}"/>
+				<h:outputText value="#{inter.bairro}" style="float: right;"/>
+				<h:inputText value="#{responsavelBean.responsavel.bairro}" maxlength="100" style=" width : 150px;" id="bairro" disabled="#{responsavelBean.disableEndereco}"/>
+				<h:outputText value="#{inter.logradouro}" style="float: right;"/>
+				<h:inputText value="#{responsavelBean.responsavel.logradouro}" maxlength="100" style=" width : 250px;" id="logradouro" disabled="#{responsavelBean.disableEndereco}"/>
+				<h:outputText value="#{inter.numero}" style="float: right;"/>
+				<h:inputText value="#{responsavelBean.responsavel.numero}" maxlength="5" style=" width : 33px;" id="numero"
+							 converterMessage="Campo Número: Apenas números são aceitos">
+					<f:convertNumber pattern="#####" integerOnly="true"/>
+				</h:inputText>
+			
+			<h:outputText value="#{inter.uf}" style="float: right;"/>
+			<h:selectOneMenu  value="#{responsavelBean.responsavel.uf}" id="uf">
+				<f:selectItems value="#{ufBean.listaUf}" />
+			</h:selectOneMenu>
+		</h:panelGrid>
+<!-- 	</rich:simpleTogglePanel> -->
+<!-- 	<rich:spacer height="10px"/> -->
+<!-- 	<rich:simpleTogglePanel switchType="client" label="Fornecedor" height="50px" width="200px"> -->
+		<h:panelGrid columns="2">
+			<h:outputText value="*#{inter.tipofornecedor}" style="float: right;"/>
+			<h:selectOneRadio value="#{responsavelBean.responsavel.tipofornecedor}" id="tipofornecedor">
+<!-- 				<a4j:support event="onclick" oncomplete="focusF()" ajaxSingle="true" reRender="panelMaskF, panelInscrF"/> -->
+		        <f:selectItem itemLabel="CNPJ" itemValue="cnpj"/>
+		        <f:selectItem itemLabel="CEI" itemValue="cei"/>
+		        <f:selectItem itemLabel="CPF" itemValue="cpf"/>
+		    </h:selectOneRadio> 
+			<h:outputText value="*#{inter.inscricaofornecedor}" style="float: right;"/>
+			<a4j:outputPanel id="panelInscrF">
+				<h:inputText value="#{responsavelBean.responsavel.inscricaofornecedor}" maxlength="18" style=" width:100px; align:left;" id="inscricaofornecedor"/>
+			</a4j:outputPanel>
+		</h:panelGrid>
+<!-- 	</rich:simpleTogglePanel> -->
+	</center>
+<!-- 	<a4j:loadScript src="/javascript/jquery.maskedinput-1.2.2.js"/> -->
+</html>

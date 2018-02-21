@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<f:subview
+xmlns="http://www.w3.org/1999/xhtml"
+   xmlns:ui="http://java.sun.com/jsf/facelets"
+   xmlns:h="http://java.sun.com/jsf/html"
+   xmlns:f="http://java.sun.com/jsf/core"
+   xmlns:a4j="http://richfaces.org/a4j"
+   xmlns:rich="http://richfaces.org/rich"> 
+<rich:popupPanel  modal="true" id="mpCompraItem" width="280" height="300" header="#{inter.tcadastrar} - #{inter.tcompra} - #{inter.tproduto}">
+	<rich:jQuery timing="domready" selector="#produto" query="focus()" />
+	<h:form id="ci">
+    	<h:panelGrid columns="2">
+			<h:outputText value="*#{inter.produto}" style="float: right;"/>
+			<a4j:outputPanel id="carregarProduto">
+				<h:selectOneMenu value="#{compraBean.compraItem.produto}" style="width:170px" id="produto" converter="entityConverter">
+			        <f:selectItems value="#{produtoBean.getListaProdutoFornecedor(compraBean.compra.fornecedor)}"/>
+			    </h:selectOneMenu>
+		    </a4j:outputPanel>
+			<h:outputText value="*#{inter.quantidade}" style="float: right;"/>
+			<h:inputText value="#{compraBean.compraItem.quantidade}" maxlength="10" style=" width:149px; align:left;" id="quantidade"
+				converterMessage="Campo Quantidade: Apenas números são aceitos"/>
+		</h:panelGrid>
+		<rich:panel style=" width : 145px; margin-left : auto; margin-right : auto;">
+			<a4j:commandButton actionListener="#{compraBean.addItem}" value="Adicionar" render="tbcompraitem"/>
+			<a4j:commandButton onclick="#{rich:component('mpCompraItem')}.hide();" value="Fechar" immediate="true"/>
+		</rich:panel>
+		<ui:include src="/tela/mensagem/mensagem.xhtml" />
+	</h:form>
+</rich:popupPanel>
+</f:subview>

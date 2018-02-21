@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: geven
+Bundle-SymbolicName: geven
+Bundle-Version: 1.0.0.qualifier
+Export-Package: br.com.aspect,
+ br.com.bean,
+ br.com.converter,
+ br.com.dao,
+ br.com.dao.utility,
+ br.com.model,
+ br.com.relatorio,
+ br.com.relatorio.jasper,
+ br.com.relatorio.jrxml,
+ br.com.util
+Require-Bundle: org.aspectj.runtime
+Import-Package: br.com.model

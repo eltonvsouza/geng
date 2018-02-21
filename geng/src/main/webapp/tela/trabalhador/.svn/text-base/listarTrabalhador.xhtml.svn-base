@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+
+<ui:composition template="/tela/template.xhtml">
+	<ui:define name="titulo">CENG - Listar - Trabalhador</ui:define>
+	<ui:define name="conteudo">
+		<f:loadBundle basename="message" var="inter" />
+		<h:form>
+			<rich:panel style=" width : 675px;">
+				<f:facet name="header">
+					<h:outputText value="Listar - Trabalhador"/>
+				</f:facet>
+				<a4j:outputPanel ajaxRendered="true">
+	       			<rich:dataTable border="0" align="center" width="650px" id="lista" value="#{trabalhadorBean.trabalhadores}" var="trabalhador" rows="10"
+	       							onRowMouseOver="this.style.backgroundColor='#F8F8F8'"
+	       							onRowMouseOut="this.style.backgroundColor='#{a4jSkin.tableBackgroundColor}'">
+	       				<f:facet name="header">
+	               			<rich:columnGroup>
+	               				<rich:column>
+	                   				<h:outputText value="Matrícula" />
+	                  				</rich:column>
+	                   			<rich:column >
+	                   				<h:outputText value="Nome" />
+	               				</rich:column>
+	               				<rich:column>
+	                   				<h:outputText value="Mãe"/>
+	                   			</rich:column>
+	                   			<rich:column>
+	                   				<h:outputText value="Salário"/>
+	                   			</rich:column>
+	                   			<rich:column>
+	                   				<h:outputText value="Alterar"/>
+	                   			</rich:column>
+	                   			<rich:column>
+	                   				<h:outputText value="Excluir"/>
+	                   			</rich:column>
+	               			</rich:columnGroup>
+	           			</f:facet>
+						<rich:column width="50px">
+	               			<h:outputText value="#{trabalhador.matricula}" />
+	           			</rich:column>
+	           			<rich:column>
+	               			<h:outputText value="#{trabalhador.nome}" />
+	           			</rich:column>
+	              			<rich:column>
+	             				<h:outputText value="#{trabalhador.mae}" />
+	             			</rich:column>
+	              			<rich:column width="65px">
+	             				<h:outputText value="#{trabalhador.salario}">
+	             					<f:convertNumber pattern="R$ #####.00"/>
+	             				</h:outputText>
+	             			</rich:column>
+	           			<rich:column width="40px" style="text-align:center">
+							<a4j:commandLink ajaxSingle="true" action="#{trabalhadorBean.carregarAlterar}" style="text-decoration:none;">
+								<f:setPropertyActionListener value="#{trabalhador.matricula}" target="#{trabalhadorBean.idBusca}" />
+								<h:graphicImage style="border:0; width:16px;" value="#{inter.iconeditar}" />
+							</a4j:commandLink>
+						</rich:column>
+	           			<rich:column width="40px" style="text-align:center">
+							<a4j:commandLink action="#{modalPanelQuestion.setaAtributos}" oncomplete="Richfaces.showModalPanel('mpQuestion')" style="margin-left:auto; margin-right:auto;">
+								<f:setPropertyActionListener value="#{trabalhador.matricula}" target="#{trabalhadorBean.idBusca}" />
+								<f:setPropertyActionListener value="trabalhador" target="#{modalPanelQuestion.entidade}" />
+								<f:setPropertyActionListener value="Excluir" target="#{modalPanelQuestion.tipo}" />
+								<h:graphicImage style="border-width:0; left:50%; right:50%; width:16px;" value="#{inter.iconlixeira}" />
+							</a4j:commandLink>
+						</rich:column>
+			        </rich:dataTable>
+		        </a4j:outputPanel>
+            	<rich:datascroller for="lista" maxPages="20" id="ds" />
+            	<ui:include src="/tela/mensagem/mensagem.xhtml" />
+            	<h:commandLink style="float:center;" id="pdf" action="#{trabalhadorBean.relatorioGeral}">
+		        	<h:graphicImage style="border-width:0; left:50%; right:50%; width:30px;" value="#{inter.iconimpressora}" />
+		        </h:commandLink>
+       			<rich:toolTip value="Imprimir em PDF" for="pdf" followMouse="true"/>
+			</rich:panel>
+		</h:form>
+		<ui:include src="/tela/mpQuestion.xhtml" />
+	</ui:define>
+</ui:composition>
+</html>

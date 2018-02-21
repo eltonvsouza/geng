@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
+<rich:jQuery timing="domready" selector="#trabalhador" query="focus()" />
+<h:panelGrid columns="2">
+	<f:loadBundle basename="message_pt_BR" var="inter" />
+	<h:outputText value="*#{inter.trabalhador}" style="float: right;"/>
+	<rich:autocomplete value="#{filhoBean.filho.trabalhador}" mode="ajax" id="autoCompleteTrabalhador" tokens=",[]" autocompleteMethod="#{trabalhadorBean.autocompleteTrabalhador}"/>
+	<h:outputText value="*#{inter.nome}" style="float: right;"/>
+	<h:inputText value="#{filhoBean.filho.nome}" maxlength="100" style=" width:250px; align:left;" id="nome"/>
+	<h:outputText value="*#{inter.mae}" style="float: right;"/>
+	<h:inputText value="#{filhoBean.filho.mae}" maxlength="100" style=" width:250px; align:left;" id="mae"/>
+	<h:outputText value="*#{inter.datanascimento}" style="float: right;"/>
+	<a4j:outputPanel layout="block" id="nasc">
+	    <rich:calendar value="#{filhoBean.filho.nascimento}"
+	        datePattern="dd/MM/yyyy" id="nascimento"
+	        cellWidth="24px" cellHeight="22px" style="width:200px" inputSize="7"/>
+    </a4j:outputPanel>
+    <rich:tooltip for="nasc" followMouse="true">
+		<span style="white-space:nowrap">
+			Só será pergmitido o registro de<br/>
+			crianças com idade até 14 anos
+		</span>
+	</rich:tooltip>
+</h:panelGrid>
+</html>
